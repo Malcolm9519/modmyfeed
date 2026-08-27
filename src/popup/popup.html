@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ModMyFeed</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>ModMyFeed</h1>
+        <p>Your feed. Your rules.</p>
+      </div>
+      <span class="local-badge" title="No analytics, backend, or external services">● Local</span>
+    </header>
+
+    <section class="trust" aria-label="Privacy status">
+      <strong>Your moderation data stays in your browser.</strong>
+      <span>No account · no analytics · no ModMyFeed server</span>
+    </section>
+
+    <section class="support-card" aria-label="Support ModMyFeed">
+      <div>
+        <strong>ModMyFeed is free.</strong>
+        <span>If it makes Reddit better for you, help fund development.</span>
+      </div>
+      <a class="support-link" href="https://buymeacoffee.com/malcolmb" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">☕ Buy me a coffee</a>
+    </section>
+
+    <nav class="tabs" aria-label="ModMyFeed sections" role="tablist">
+      <button id="tab-feed" type="button" class="tab active" data-view="feed" role="tab" aria-selected="true" aria-controls="panel-feed">My Feed</button>
+      <button id="tab-presets" type="button" class="tab" data-view="presets" role="tab" aria-selected="false" aria-controls="panel-presets" tabindex="-1">Presets</button>
+      <button id="tab-advanced" type="button" class="tab" data-view="advanced" role="tab" aria-selected="false" aria-controls="panel-advanced" tabindex="-1">Advanced</button>
+    </nav>
+
+    <p id="message" class="message" aria-live="polite"></p>
+
+    <section id="panel-feed" class="view active" data-panel="feed" role="tabpanel" aria-labelledby="tab-feed">
+      <div class="hero-card">
+        <h2>Mute something</h2>
+        <p>Choose exactly what you want to hide. <strong>Words / phrase</strong> is a literal text match — there is no AI or interpretation.</p>
+        <form id="quick-form" class="stack-form">
+          <div class="quick-target">
+            <label>Mute
+              <select id="quick-kind">
+                <option value="keyword">Words / phrase</option>
+                <option value="subreddit">Subreddit</option>
+                <option value="author">User</option>
+                <option value="domain">Domain</option>
+                <option value="flair">Flair</option>
+              </select>
+            </label>
+            <label>Value
+              <input id="quick-value" type="text" autocomplete="off" placeholder="e.g. Elden Ring" required>
+            </label>
+          </div>
+          <p id="quick-hint" class="field-hint" aria-live="polite"></p>
+          <div class="inline-fields">
+            <label>For
+              <select id="quick-duration">
+                <option value="always">Always</option>
+                <option value="24h">24 hours</option>
+                <option value="7d">7 days</option>
+                <option value="30d">30 days</option>
+              </select>
+            </label>
+            <button type="submit" class="primary">Mute</button>
+          </div>
+          <details id="quick-scope-details" class="quiet-details">
+            <summary>Limit this mute to one subreddit</summary>
+            <label>Only in subreddit
+              <input id="quick-subreddit" type="text" autocomplete="off" placeholder="e.g. SideProject">
+            </label>
+          </details>
+        </form>
+      </div>
+
+      <div class="section-heading">
+        <h2>Active on your feed</h2>
+        <span id="active-count">0</span>
+      </div>
+      <div id="active-items" class="cards"></div>
+      <p id="active-empty" class="empty">Nothing muted yet. Use Mute on a Reddit post or add something above.</p>
+
+      <div class="section-heading review-heading">
+        <h2>Recently hidden</h2>
+        <div class="heading-actions"><span id="recent-count">0</span><button id="open-review" type="button">Review</button></div>
+      </div>
+      <p id="recent-summary" class="recent-summary">Hidden posts are kept here locally for 7 days so you can check false positives.</p>
+    </section>
+
+    <section id="panel-presets" class="view" data-panel="presets" role="tabpanel" aria-labelledby="tab-presets" hidden>
+      <div class="section-intro">
+        <h2>Ready-made filters</h2>
+        <p>Optional, conservative filters for common feed clutter. They are ordinary local rules underneath and can be inspected or removed in Advanced.</p>
+      </div>
+
+      <div id="preset-list" class="preset-list">
+        <h3 class="preset-group-title">Topics</h3>
+        <article class="preset-card" data-preset-card="politics">
+          <div><strong>Politics</strong><span>Reduce clearly political posts using politics communities, explicit flairs, and high-confidence title terms.</span></div>
+          <button type="button" data-preset="politics">Enable</button>
+        </article>
+        <article class="preset-card" data-preset-card="ai-generative">
+          <div><strong>AI / generative AI</strong><span>Reduce clearly AI-centered posts using AI communities, explicit flairs, and recognizable model/tool terms.</span></div>
+          <button type="button" data-preset="ai-generative">Enable</button>
+        </article>
+        <article class="preset-card" data-preset-card="crypto-nft">
+          <div><strong>Crypto / NFT</strong><span>Reduce clearly crypto-centered posts using crypto communities, explicit flairs, and common terminology.</span></div>
+          <button type="button" data-preset="crypto-nft">Enable</button>
+        </article>
+
+        <h3 class="preset-group-title">Clutter</h3>
+        <article class="preset-card" data-preset-card="self-promotion">
+          <div><strong>Self-promotion</strong><span>Reduce obvious self-promotion and self-promo flairs while keeping common case-study and postmortem titles.</span></div>
+          <button type="button" data-preset="self-promotion">Enable</button>
+        </article>
+        <article class="preset-card" data-preset-card="engagement-bait">
+          <div><strong>Engagement bait</strong><span>Reduce common “hot take / change my mind / rate my…” title patterns.</span></div>
+          <button type="button" data-preset="engagement-bait">Enable</button>
+        </article>
+        <article class="preset-card" data-preset-card="referral-spam">
+          <div><strong>Referral & coupon spam</strong><span>Hide posts pushing referral links, affiliate links, promo codes, and similar incentive spam.</span></div>
+          <button type="button" data-preset="referral-spam">Enable</button>
+        </article>
+        <article class="preset-card" data-preset-card="meme-flairs">
+          <div><strong>Meme / shitpost flairs</strong><span>Hide posts explicitly flaired “meme” or “shitpost”.</span></div>
+          <button type="button" data-preset="meme-flairs">Enable</button>
+        </article>
+      </div>
+      <p class="small-note">Presets are intentionally narrow. If a preset does not match what you want, leave it off and use your own mutes instead.</p>
+    </section>
+
+    <section id="panel-advanced" class="view" data-panel="advanced" role="tabpanel" aria-labelledby="tab-advanced" hidden>
+      <div class="section-intro">
+        <h2>Manage everything</h2>
+        <p>Review and edit what you have muted. This page is for control and inspection, not something you need for everyday use.</p>
+      </div>
+
+      <section class="packs-section">
+        <div class="section-heading"><h2>Enabled presets</h2><span id="pack-count">0</span></div>
+        <div id="packs" class="packs"></div>
+        <p id="packs-empty" class="empty">No presets enabled.</p>
+      </section>
+
+      <section class="rules-section">
+        <div class="section-heading"><h2>Your mutes</h2><span id="rule-count">0</span></div>
+        <div id="rule-groups" class="rule-groups"></div>
+        <p id="empty" class="empty">No personal mutes yet. Create them from My Feed or the Mute button on Reddit.</p>
+      </section>
+
+      <details class="advanced-block tools-block">
+        <summary>Import, export & backup</summary>
+        <div class="pack-tools">
+          <button id="import-pack" type="button">Import preset JSON</button>
+          <button id="export-rules" type="button">Export my mutes</button>
+          <button id="backup-all" type="button">Backup everything</button>
+          <input id="pack-file" type="file" accept="application/json,.json" hidden>
+        </div>
+        <p class="expert-note">Imports are data only: no executable code, remote scripts, or downloaded regex. Everything is validated before it is stored.</p>
+      </details>
+    </section>
+
+    <footer><span>Alpha 0.9.1</span><span><a href="https://github.com/Malcolm9519/modmyfeed" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Source</a> · Reddit only</span></footer>
+  </main>
+
+
+  <dialog id="onboarding-dialog" aria-labelledby="onboarding-title">
+    <div class="onboarding-shell">
+      <div class="onboarding-brand" aria-hidden="true">MMF</div>
+      <div>
+        <h2 id="onboarding-title">Make Reddit yours.</h2>
+        <p class="onboarding-lead">ModMyFeed adds personal moderation to your feed without sending your browsing data anywhere.</p>
+      </div>
+      <ol class="onboarding-steps">
+        <li><strong>See something you do not want?</strong><span>Click <b>Mute</b> on the post.</span></li>
+        <li><strong>Choose exactly what bothers you.</strong><span>Mute a phrase, subreddit, user, domain, or flair — temporarily or always.</span></li>
+        <li><strong>Stay in control.</strong><span>Show a post once, undo a mute, or review recently hidden posts anytime.</span></li>
+      </ol>
+      <div class="onboarding-trust"><strong>Local by design.</strong><span>No account · no analytics · no server · Reddit only</span></div>
+      <button id="finish-onboarding" type="button" class="primary full">Start moderating</button>
+    </div>
+  </dialog>
+
+  <dialog id="review-dialog">
+    <form method="dialog" class="editor-shell review-shell">
+      <div class="editor-heading">
+        <div><strong>Recently hidden</strong><span>Titles and basic post metadata only. Stored locally and automatically cleared after 7 days.</span></div>
+        <button value="cancel" class="icon-button" aria-label="Close review">×</button>
+      </div>
+      <div class="review-toolbar">
+        <span id="review-count">0 hidden posts</span>
+        <button id="clear-history" type="button">Clear history</button>
+      </div>
+      <div id="review-list" class="review-list"></div>
+      <p id="review-empty" class="empty">Nothing has been hidden recently.</p>
+      <div class="editor-actions"><button value="cancel">Close</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="rule-editor">
+    <form method="dialog" class="editor-shell">
+      <div class="editor-heading">
+        <div><strong>Edit mute</strong><span>Change the target, duration, or subreddit scope.</span></div>
+        <button value="cancel" class="icon-button" aria-label="Close editor">×</button>
+      </div>
+      <div class="stack-form editor-fields">
+        <div class="two-cols">
+          <label>Mute
+            <select id="edit-kind">
+              <option value="keyword">Words / phrase</option>
+              <option value="subreddit">Subreddit</option>
+              <option value="author">User</option>
+              <option value="domain">Domain</option>
+              <option value="flair">Flair</option>
+              <option value="regex">Regex (existing expert rule)</option>
+            </select>
+          </label>
+          <label>Value
+            <input id="edit-value" type="text" autocomplete="off">
+          </label>
+        </div>
+        <div class="two-cols">
+          <label>Duration
+            <select id="edit-duration">
+              <option value="keep">Keep current</option>
+              <option value="always">Always</option>
+              <option value="24h">24 hours from now</option>
+              <option value="7d">7 days from now</option>
+              <option value="30d">30 days from now</option>
+            </select>
+          </label>
+          <label>Only in subreddit
+            <input id="edit-subreddit" type="text" autocomplete="off" placeholder="optional">
+          </label>
+        </div>
+        <p id="editor-note" class="editor-message" aria-live="polite"></p>
+        <button id="save-friendly" type="button" class="primary full">Save changes</button>
+      </div>
+      <div class="editor-actions"><button value="cancel">Close</button></div>
+    </form>
+  </dialog>
+
+  <script src="../shared/rules.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
