@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "ModMyFeed — Reddit Feed Moderation",
   "short_name": "ModMyFeed",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Personal moderation for Reddit: mute words, subreddits, users, domains, flairs, and common feed clutter locally.",
   "permissions": [
     "storage"
