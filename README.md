@@ -4,8 +4,6 @@
 
 ModMyFeed is a free Chrome extension that lets you personally mute the parts of Reddit you do not want to see — without leaving communities you otherwise enjoy.
 
-[☕ **If you like the idea, consider funding my caffeine addiction**](https://buymeacoffee.com/malcolmb)
-
 > No subscription. No ads. No analytics. No account. No ModMyFeed server.
 
 ## What it does
@@ -87,9 +85,7 @@ Your moderation data stays local. The extension contains ordinary links to this 
 
 ModMyFeed is free because the core product should not need an account, subscription, tracking SDK, or licensing server.
 
-If it makes Reddit meaningfully better for you, the easiest way to support continued development is:
-
-[☕ **Buy me a coffee — buymeacoffee.com/malcolmb**](https://buymeacoffee.com/malcolmb)
+[☕ **If you like the idea, consider funding my caffeine addiction**](https://buymeacoffee.com/malcolmb)
 
 ## Feedback
 
