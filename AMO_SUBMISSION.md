@@ -36,12 +36,12 @@ Suggested reviewer note:
 
 ## License
 
-AMO asks you to select a license during submission. The repository currently has **no software license selected**. Choose one deliberately before final submission. If you want broad permission for people to inspect, use, modify, and redistribute the code, MIT is the simplest common option; MPL 2.0 is a Firefox-native alternative that keeps modifications to MPL-covered files open when distributed.
+**MIT License**. The repository includes the full `LICENSE` file. Select MIT in the AMO submission form.
 
 ## Before clicking Submit
 
 - Set your AMO developer display name.
 - Enter the support email you want users/reviewers to use.
-- Choose a software license.
+- Select **MIT License**.
 - Upload screenshots if the listing flow requests them.
 - Link the public privacy/trust docs even though the extension declares no transmitted data.
